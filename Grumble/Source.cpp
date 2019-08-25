@@ -1,15 +1,16 @@
 #include <iostream>
 #include <string>
+#include <regex>
 
 #define logln(x) cout << x << endl;
 #define log(x) cout << x;
 
 using namespace std;
 
+/*MAIN DATA STRUCTURE*/
 struct ComplaintInfo
 {
 	int complaintNum;
-	string complaintID;
 	string customerName;
 	string customerAddress;
 	string complaint;
@@ -18,20 +19,28 @@ struct ComplaintInfo
 	struct ComplaintInfo* nextPtr;
 };
 
+
 typedef ComplaintInfo* ComplaintInfoPtr;
 
+/*PROTOTYPES*/
 void menuCtrl();
 void menuView();
 void addCompView();
 void addCompCtrl(ComplaintInfoPtr* startPtr);
 void viewAllComplaints(ComplaintInfoPtr startPtr);
 
+
+
+/*MAIN*/
 int main() {
 
 	menuCtrl();
 
 }
 
+
+
+/*MAIN MENU CONTROLER*/
 void menuCtrl() {
 
 	ComplaintInfoPtr startPtr = NULL;
@@ -84,6 +93,7 @@ void menuCtrl() {
 
 }
 
+/*MAIN MENU DISPLAY*/
 void menuView() {
 
 	logln("\n\t\t\t===========================================");
@@ -108,16 +118,24 @@ void addCompView() {
 	logln("\n\t\t\t===========================================");
 }
 
+
+/*ADD COMPLAINT CONTROLER*/
 void addCompCtrl(ComplaintInfoPtr* startPtr) {
 
 	int complaintNum;
+	bool fail;
+	regex dateReg("\\d{2}[-]\\d{2}[-]\\d{4}"), contactReg("\\d{10}");
+
 	string complaintID, customerName, customerAddress, complaint, contactNumber, date;
 
 	/* Ask for user input */
-	log("\tEnter Complaint Number: C");
-	cin >> complaintID;
-	cin.ignore(100, '\n');
-	complaintNum = stoi(complaintID);
+	do {
+		log("\tEnter Complaint Number: C");
+		cin >> complaintNum;
+		fail = cin.fail();
+		cin.clear();
+		cin.ignore(100, '\n');
+	} while (fail == true);
 
 	log("\tEnter Customer Name: ");
 	getline(cin, customerName);
@@ -128,13 +146,21 @@ void addCompCtrl(ComplaintInfoPtr* startPtr) {
 	log("\tEnter Complaint Description: ");
 	getline(cin, complaint);
 
-	log("\tEnter Contact Number: ");
-	cin >> contactNumber;
+	do {
+		log("\tEnter Contact Number (valid 10 digit number): ");
+		cin >> contactNumber;
+		cin.clear();
+		cin.ignore(100, '\n');
+	}while (!regex_match(contactNumber, contactReg));
+	
 
-	log("\tEnter Date: ");
-	cin >> date;
-
-	complaintID = "C" + complaintID;
+	do {
+		log("\tEnter Date (dd-mm-yyyy): ");
+		cin >> date;
+		cin.clear();
+		cin.ignore(100, '\n');
+	} while (!regex_match(date, dateReg));
+	
 
 	/* Add to data Structure*/
 
@@ -148,7 +174,6 @@ void addCompCtrl(ComplaintInfoPtr* startPtr) {
 	if (newPtr != NULL) {
 
 		newPtr->complaintNum = complaintNum;
-		newPtr->complaintID = complaintID;
 		newPtr->customerName = customerName;
 		newPtr->customerAddress = customerAddress;
 		newPtr->complaint = complaint;
@@ -179,6 +204,8 @@ void addCompCtrl(ComplaintInfoPtr* startPtr) {
 
 }
 
+
+/*VIEW ALL COMPLAINTS*/
 void viewAllComplaints(ComplaintInfoPtr startPtr) {
 
 	logln("\n\t\t\t===========================================");
@@ -191,11 +218,13 @@ void viewAllComplaints(ComplaintInfoPtr startPtr) {
 	else {
 		while (startPtr != NULL) {
 			logln("---------------------------------------------");
-			logln("\n\tComplaint ID: " << startPtr->complaintID);
+			logln("\n\tComplaint ID: C" <<  startPtr->complaintNum);
 			logln("\n\tCustomer Name: " << startPtr->customerName);
 			logln("\n\tCustomer Address: " << startPtr->customerAddress);
 			logln("\n\tContact Number: " << startPtr->contactNumber);
 			logln("\n\tComplaint Description: " << startPtr->complaint);
+			logln("\n\tDate: " << startPtr->date);
+
 			startPtr = startPtr->nextPtr;
 		}
 	}
