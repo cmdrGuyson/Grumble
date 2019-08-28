@@ -16,6 +16,7 @@ struct ComplaintInfo
 	string complaint;
 	string contactNumber;
 	string date;
+	string status;
 	struct ComplaintInfo* nextPtr;
 };
 
@@ -28,6 +29,7 @@ void menuView();
 void addCompView();
 void addCompCtrl(ComplaintInfoPtr* startPtr);
 void viewAllComplaints(ComplaintInfoPtr startPtr);
+void viewSingleComplaint(ComplaintInfoPtr startPtr);
 
 
 
@@ -54,7 +56,7 @@ void menuCtrl() {
 	char in;
 	cin >> in;
 
-	while (!(in == '1' || in == '2'|| in == '3'|| in == '4' || in == '5')) {
+	while (!(in == '1' || in == '2' || in == '3' || in == '4' || in == '5' || in == '6' || in == '7' || in == '0')) {
 		system("cls");
 		menuView();
 		log("\n\t\t\t	Enter a valid choice: ");
@@ -63,7 +65,7 @@ void menuCtrl() {
 
 
 	/* Handle User Response */
-	while (in != '5') {
+	while (in != '0') {
 		switch (in) {
 		case '1':
 			//add complaint
@@ -82,6 +84,17 @@ void menuCtrl() {
 			system("cls");
 			viewAllComplaints(startPtr);
 			break;
+		case '5':
+			//view single complaint
+			system("cls");
+			viewSingleComplaint(startPtr);
+			break;
+		case '6':
+			//view all addressed complaints
+			break;
+		case '7':
+			//view all removed complaints
+			break;
 		}
 		system("cls");
 		menuView();
@@ -96,19 +109,25 @@ void menuCtrl() {
 /*MAIN MENU DISPLAY*/
 void menuView() {
 
-	logln("\n\t\t\t===========================================");
-	logln("\n\t\t\t    I-CALL COMPLAINT MANANGEMENT SYSTEM    ");
-	logln("\n\t\t\t===========================================");
+	logln("\n\t\t\t===================================================");
+	logln("\n\t\t\t        I-CALL COMPLAINT MANANGEMENT SYSTEM        ");
+	logln("\n\t\t\t===================================================");
 	logln("\n\t\t\t    INPUT  (1)	 TO ADD A COMPLAINT");
-	logln("\t\t\t-------------------------------------------");
+	logln("\t\t\t---------------------------------------------------");
 	logln("\t\t\t    INPUT  (2)	 TO REMOVE A COMPLAINT");
-	logln("\t\t\t-------------------------------------------");
+	logln("\t\t\t---------------------------------------------------");
 	logln("\t\t\t    INPUT  (3)	 TO UPDATE A COMPLAINT");
-	logln("\t\t\t-------------------------------------------");
+	logln("\t\t\t---------------------------------------------------");
 	logln("\t\t\t    INPUT  (4)	 TO VIEW ALL COMPLAINTS");
-	logln("\t\t\t-------------------------------------------");
-	logln("\t\t\t    INPUT  (5)	 TO EXIT");
-	logln("\t\t\t-------------------------------------------");
+	logln("\t\t\t---------------------------------------------------");
+	logln("\t\t\t    INPUT  (5)	 TO SINGLE COMPLAINT");
+	logln("\t\t\t---------------------------------------------------");
+	logln("\t\t\t    INPUT  (6)	 TO VIEW ALL ADDRESSED COMPLAINTS");
+	logln("\t\t\t---------------------------------------------------");
+	logln("\t\t\t    INPUT  (7)	 TO VIEW ALL REMOVED COMPLAINTS");
+	logln("\t\t\t---------------------------------------------------");
+	logln("\t\t\t    INPUT  (0)	 TO EXIT");
+	logln("\t\t\t---------------------------------------------------");
 }
 
 void addCompView() {
@@ -123,6 +142,7 @@ void addCompView() {
 void addCompCtrl(ComplaintInfoPtr* startPtr) {
 
 	int complaintNum;
+	char confirm;
 	bool fail;
 	regex dateReg("\\d{2}[-]\\d{2}[-]\\d{4}"), contactReg("\\d{10}");
 
@@ -130,36 +150,44 @@ void addCompCtrl(ComplaintInfoPtr* startPtr) {
 
 	/* Ask for user input */
 	do {
-		log("\tEnter Complaint Number: C");
-		cin >> complaintNum;
-		fail = cin.fail();
-		cin.clear();
-		cin.ignore(100, '\n');
-	} while (fail == true);
+		do {
+			log("\tEnter Complaint Number: C");
+			cin >> complaintNum;
+			fail = cin.fail();
+			cin.clear();
+			cin.ignore(100, '\n');
+		} while (fail == true);
 
-	log("\tEnter Customer Name: ");
-	getline(cin, customerName);
+		log("\tEnter Customer Name: ");
+		getline(cin, customerName);
 
-	log("\tEnter Customer Address: ");
-	getline(cin, customerAddress);
+		log("\tEnter Customer Address: ");
+		getline(cin, customerAddress);
 
-	log("\tEnter Complaint Description: ");
-	getline(cin, complaint);
+		log("\tEnter Complaint Description: ");
+		getline(cin, complaint);
 
-	do {
-		log("\tEnter Contact Number (valid 10 digit number): ");
-		cin >> contactNumber;
-		cin.clear();
-		cin.ignore(100, '\n');
-	}while (!regex_match(contactNumber, contactReg));
+		do {
+			log("\tEnter Contact Number (valid 10 digit number): ");
+			cin >> contactNumber;
+			cin.clear();
+			cin.ignore(100, '\n');
+		} while (!regex_match(contactNumber, contactReg));
+
+
+		do {
+			log("\tEnter Date (dd-mm-yyyy): ");
+			cin >> date;
+			cin.clear();
+			cin.ignore(100, '\n');
+		} while (!regex_match(date, dateReg));
+
+		log("\nIs this information correct? (y/n): ");
+		cin >> confirm;
+
+	} while (confirm != 'y');
+
 	
-
-	do {
-		log("\tEnter Date (dd-mm-yyyy): ");
-		cin >> date;
-		cin.clear();
-		cin.ignore(100, '\n');
-	} while (!regex_match(date, dateReg));
 	
 
 	/* Add to data Structure*/
@@ -179,6 +207,7 @@ void addCompCtrl(ComplaintInfoPtr* startPtr) {
 		newPtr->complaint = complaint;
 		newPtr->contactNumber = contactNumber;
 		newPtr->date = date;
+		newPtr->status = "open";
 		newPtr->nextPtr = NULL;
 
 		previousPtr = NULL;
@@ -218,12 +247,13 @@ void viewAllComplaints(ComplaintInfoPtr startPtr) {
 	else {
 		while (startPtr != NULL) {
 			logln("---------------------------------------------");
-			logln("\n\tComplaint ID: C" <<  startPtr->complaintNum);
-			logln("\n\tCustomer Name: " << startPtr->customerName);
-			logln("\n\tCustomer Address: " << startPtr->customerAddress);
-			logln("\n\tContact Number: " << startPtr->contactNumber);
-			logln("\n\tComplaint Description: " << startPtr->complaint);
-			logln("\n\tDate: " << startPtr->date);
+			logln("\tComplaint ID: C" <<  startPtr->complaintNum);
+			logln("\tCustomer Name: " << startPtr->customerName);
+			logln("\tCustomer Address: " << startPtr->customerAddress);
+			logln("\tContact Number: " << startPtr->contactNumber);
+			logln("\tComplaint Description: " << startPtr->complaint);
+			logln("\tDate: " << startPtr->date);
+			logln("\tStatus: " << startPtr->status);
 
 			startPtr = startPtr->nextPtr;
 		}
@@ -232,5 +262,48 @@ void viewAllComplaints(ComplaintInfoPtr startPtr) {
 	logln("---------------------------------------------");
 	logln("\n\n");
 	system("pause");
+
+}
+
+/* VIEW INFO ON A SINGLE COMPLAINT */
+void viewSingleComplaint(ComplaintInfoPtr startPtr) {
+
+	logln("\n\t\t\t===========================================");
+	logln("\n\t\t\t           VIEW SINGLE COMPLAINT           ");
+	logln("\n\t\t\t===========================================\n");
+
+	int searchKey;
+	bool fail;
+
+	do {
+		log("\tEnter Complaint Number: C");
+		cin >> searchKey;
+		fail = cin.fail();
+		cin.clear();
+		cin.ignore(100, '\n');
+	} while (fail == true);
+
+	if (startPtr == NULL) {
+		logln("\nThere are no complaints!");
+	}
+	else {
+
+		while (startPtr->complaintNum != searchKey) {
+			startPtr = startPtr->nextPtr;
+		}
+
+		logln("---------------------------------------------");
+		logln("\tComplaint ID: C" << startPtr->complaintNum);
+		logln("\tCustomer Name: " << startPtr->customerName);
+		logln("\tCustomer Address: " << startPtr->customerAddress);
+		logln("\tContact Number: " << startPtr->contactNumber);
+		logln("\tComplaint Description: " << startPtr->complaint);
+		logln("\tDate: " << startPtr->date);
+		logln("\tStatus: " << startPtr->status);
+		logln("---------------------------------------------");
+		logln("\n\n");
+		system("pause");
+
+	}
 
 }
