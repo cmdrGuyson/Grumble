@@ -29,7 +29,8 @@ void menuView();
 void addCompView();
 void addCompCtrl(ComplaintInfoPtr* startPtr);
 void viewAllComplaints(ComplaintInfoPtr startPtr);
-void viewSingleComplaint(ComplaintInfoPtr startPtr);
+void viewSingleComplaintCtrl(ComplaintInfoPtr startPtr);
+bool viewSingleComplaint(ComplaintInfoPtr startPtr, int searchKey);
 
 
 
@@ -87,7 +88,7 @@ void menuCtrl() {
 		case '5':
 			//view single complaint
 			system("cls");
-			viewSingleComplaint(startPtr);
+			viewSingleComplaintCtrl(startPtr);
 			break;
 		case '6':
 			//view all addressed complaints
@@ -266,7 +267,7 @@ void viewAllComplaints(ComplaintInfoPtr startPtr) {
 }
 
 /* VIEW INFO ON A SINGLE COMPLAINT */
-void viewSingleComplaint(ComplaintInfoPtr startPtr) {
+void viewSingleComplaintCtrl(ComplaintInfoPtr startPtr) {
 
 	logln("\n\t\t\t===========================================");
 	logln("\n\t\t\t           VIEW SINGLE COMPLAINT           ");
@@ -283,13 +284,29 @@ void viewSingleComplaint(ComplaintInfoPtr startPtr) {
 		cin.ignore(100, '\n');
 	} while (fail == true);
 
+	if (viewSingleComplaint(startPtr, searchKey)==true) {
+		system("pause");
+	}
+	else {
+		logln("Complaint not found!");
+		system("pause");
+	}
+
+}
+
+bool viewSingleComplaint(ComplaintInfoPtr startPtr, int searchKey) {
 	if (startPtr == NULL) {
 		logln("\nThere are no complaints!");
+		return true;
+
 	}
 	else {
 
 		while (startPtr->complaintNum != searchKey) {
 			startPtr = startPtr->nextPtr;
+			if (startPtr == NULL) {
+				return false;
+			}
 		}
 
 		logln("---------------------------------------------");
@@ -302,8 +319,8 @@ void viewSingleComplaint(ComplaintInfoPtr startPtr) {
 		logln("\tStatus: " << startPtr->status);
 		logln("---------------------------------------------");
 		logln("\n\n");
-		system("pause");
 
+		return true;
+		
 	}
-
 }
