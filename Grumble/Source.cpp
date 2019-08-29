@@ -31,6 +31,7 @@ void addCompCtrl(ComplaintInfoPtr* startPtr);
 void viewAllComplaints(ComplaintInfoPtr startPtr);
 void viewSingleComplaintCtrl(ComplaintInfoPtr startPtr);
 bool viewSingleComplaint(ComplaintInfoPtr startPtr, int searchKey);
+bool verifyCompNum(ComplaintInfoPtr startPtr, int searchKey);
 
 
 
@@ -102,8 +103,8 @@ void menuCtrl() {
 		log("\n\t\t\t	Enter your choice: ");
 		cin >> in;
 	}
-	
-	
+
+
 
 }
 
@@ -155,9 +156,14 @@ void addCompCtrl(ComplaintInfoPtr* startPtr) {
 			log("\tEnter Complaint Number: C");
 			cin >> complaintNum;
 			fail = cin.fail();
+			if (fail == true) {
+				logln("\tPlease enter a valid number.")
+			}
+			fail = verifyCompNum(*startPtr, complaintNum);
 			cin.clear();
 			cin.ignore(100, '\n');
 		} while (fail == true);
+
 
 		log("\tEnter Customer Name: ");
 		getline(cin, customerName);
@@ -176,6 +182,8 @@ void addCompCtrl(ComplaintInfoPtr* startPtr) {
 		} while (!regex_match(contactNumber, contactReg));
 
 
+
+
 		do {
 			log("\tEnter Date (dd-mm-yyyy): ");
 			cin >> date;
@@ -188,8 +196,8 @@ void addCompCtrl(ComplaintInfoPtr* startPtr) {
 
 	} while (confirm != 'y');
 
-	
-	
+
+
 
 	/* Add to data Structure*/
 
@@ -240,25 +248,25 @@ void viewAllComplaints(ComplaintInfoPtr startPtr) {
 
 	logln("\n\t\t\t===========================================");
 	logln("\n\t\t\t           VIEW ALL COMPLAINTS             ");
-	logln("\n\t\t\t===========================================\n");\
+	logln("\n\t\t\t===========================================\n"); \
 
-	if (startPtr == NULL) {
-		logln("/n There are no complaints!");
-	}
-	else {
-		while (startPtr != NULL) {
-			logln("---------------------------------------------");
-			logln("\tComplaint ID: C" <<  startPtr->complaintNum);
-			logln("\tCustomer Name: " << startPtr->customerName);
-			logln("\tCustomer Address: " << startPtr->customerAddress);
-			logln("\tContact Number: " << startPtr->contactNumber);
-			logln("\tComplaint Description: " << startPtr->complaint);
-			logln("\tDate: " << startPtr->date);
-			logln("\tStatus: " << startPtr->status);
-
-			startPtr = startPtr->nextPtr;
+		if (startPtr == NULL) {
+			logln("/n There are no complaints!");
 		}
-	}
+		else {
+			while (startPtr != NULL) {
+				logln("---------------------------------------------");
+				logln("\tComplaint ID: C" << startPtr->complaintNum);
+				logln("\tCustomer Name: " << startPtr->customerName);
+				logln("\tCustomer Address: " << startPtr->customerAddress);
+				logln("\tContact Number: " << startPtr->contactNumber);
+				logln("\tComplaint Description: " << startPtr->complaint);
+				logln("\tDate: " << startPtr->date);
+				logln("\tStatus: " << startPtr->status);
+
+				startPtr = startPtr->nextPtr;
+			}
+		}
 
 	logln("---------------------------------------------");
 	logln("\n\n");
@@ -284,7 +292,7 @@ void viewSingleComplaintCtrl(ComplaintInfoPtr startPtr) {
 		cin.ignore(100, '\n');
 	} while (fail == true);
 
-	if (viewSingleComplaint(startPtr, searchKey)==true) {
+	if (viewSingleComplaint(startPtr, searchKey) == true) {
 		system("pause");
 	}
 	else {
@@ -321,6 +329,28 @@ bool viewSingleComplaint(ComplaintInfoPtr startPtr, int searchKey) {
 		logln("\n\n");
 
 		return true;
-		
+
+	}
+}
+
+bool verifyCompNum(ComplaintInfoPtr startPtr, int searchKey) {
+	if (startPtr == NULL) {
+		return false;
+	}
+	else {
+
+		while (startPtr->complaintNum != searchKey) {
+			startPtr = startPtr->nextPtr;
+			if (startPtr == NULL) {
+				return true;
+			}
+		}
+
+		if (startPtr->complaintNum == searchKey) {
+			logln("\tThis complaint number already exits!");
+			return true;
+		}
+
+		return false;
 	}
 }
