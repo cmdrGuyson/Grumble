@@ -32,6 +32,8 @@ void viewAllComplaints(ComplaintInfoPtr startPtr);
 void viewSingleComplaintCtrl(ComplaintInfoPtr startPtr);
 bool viewSingleComplaint(ComplaintInfoPtr startPtr, int searchKey);
 bool verifyCompNum(ComplaintInfoPtr startPtr, int searchKey);
+void editComplaintCtrl(ComplaintInfoPtr startPtr);
+bool editComplaint(ComplaintInfoPtr startPtr, int searchKey);
 
 
 
@@ -80,6 +82,8 @@ void menuCtrl() {
 			break;
 		case '3':
 			//update complaint
+			system("cls");
+			editComplaintCtrl(startPtr);
 			break;
 		case '4':
 			//view all complaints
@@ -122,7 +126,7 @@ void menuView() {
 	logln("\t\t\t---------------------------------------------------");
 	logln("\t\t\t    INPUT  (4)	 TO VIEW ALL COMPLAINTS");
 	logln("\t\t\t---------------------------------------------------");
-	logln("\t\t\t    INPUT  (5)	 TO SINGLE COMPLAINT");
+	logln("\t\t\t    INPUT  (5)	 TO VIEW A SINGLE COMPLAINT");
 	logln("\t\t\t---------------------------------------------------");
 	logln("\t\t\t    INPUT  (6)	 TO VIEW ALL ADDRESSED COMPLAINTS");
 	logln("\t\t\t---------------------------------------------------");
@@ -333,6 +337,8 @@ bool viewSingleComplaint(ComplaintInfoPtr startPtr, int searchKey) {
 	}
 }
 
+
+/* COMPLAINT NUMBER VERIFICATION */
 bool verifyCompNum(ComplaintInfoPtr startPtr, int searchKey) {
 	if (startPtr == NULL) {
 		return false;
@@ -353,4 +359,88 @@ bool verifyCompNum(ComplaintInfoPtr startPtr, int searchKey) {
 
 		return false;
 	}
+}
+
+/* EDIT A COMPLAINT */
+void editComplaintCtrl(ComplaintInfoPtr startPtr) {
+
+	logln("\n\t\t\t===========================================");
+	logln("\n\t\t\t              EDIT A COMPLAINT             ");
+	logln("\n\t\t\t===========================================\n");
+
+	int searchKey;
+	bool fail;
+
+	if (startPtr == NULL) {
+		logln("\nThere are no complaints!\n");
+		system("pause");
+	}
+	else {
+		do {
+			log("\tEnter Complaint Number: C");
+			cin >> searchKey;
+			fail = cin.fail();
+			cin.clear();
+			cin.ignore(100, '\n');
+		} while (fail == true);
+
+		if (editComplaint(startPtr, searchKey) == true) {
+			system("pause");
+		}
+		else {
+			logln("Complaint not found!");
+			system("pause");
+		}
+	}
+
+
+
+}
+
+bool editComplaint(ComplaintInfoPtr startPtr, int searchKey) {
+	while (startPtr->complaintNum != searchKey) {
+		startPtr = startPtr->nextPtr;
+		if (startPtr == NULL) {
+			return false;
+		}
+	}
+
+	logln("---------------------------------------------");
+	logln("\tComplaint ID: C" << startPtr->complaintNum);
+	logln("\tCustomer Name: " << startPtr->customerName);
+	logln("\tCustomer Address: " << startPtr->customerAddress);
+	logln("\tContact Number: " << startPtr->contactNumber);
+	logln("\tComplaint Description: " << startPtr->complaint);
+	logln("\tDate: " << startPtr->date);
+	logln("\tStatus: " << startPtr->status);
+	logln("---------------------------------------------");
+	logln("\n\n");
+
+	char confirm;
+	regex contactReg("\\d{10}");
+
+	string customerAddress, contactNumber;
+
+	/* Ask for user input */
+	do {
+
+		log("\tEnter Customer Address: ");
+		getline(cin, customerAddress);
+
+		do {
+			log("\tEnter Contact Number (valid 10 digit number): ");
+			cin >> contactNumber;
+			cin.clear();
+			cin.ignore(100, '\n');
+		} while (!regex_match(contactNumber, contactReg));
+
+		log("\nIs this information correct? (y/n): ");
+		cin >> confirm;
+
+	} while (confirm != 'y');
+
+	startPtr->customerAddress = customerAddress;
+	startPtr->contactNumber = contactNumber;
+
+	return true;
 }
