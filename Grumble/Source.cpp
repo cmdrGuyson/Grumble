@@ -20,8 +20,22 @@ struct ComplaintInfo
 	struct ComplaintInfo* nextPtr;
 };
 
+/*REMOVED COMPLAINT DATA STRUCTURE*/
+struct RemovedComplaintInfo
+{
+	int complaintNum;
+	string customerName;
+	string customerAddress;
+	string complaint;
+	string contactNumber;
+	string date;
+	string status;
+	struct RemovedComplaintInfo* nextPtr;
+};
+
 
 typedef ComplaintInfo* ComplaintInfoPtr;
+typedef RemovedComplaintInfo* RemovedComplaintInfoPtr;
 
 /*PROTOTYPES*/
 void menuCtrl();
@@ -29,13 +43,14 @@ void menuView();
 void addCompView();
 void addCompCtrl(ComplaintInfoPtr* startPtr);
 void viewAllComplaints(ComplaintInfoPtr startPtr);
+void viewAllRemovedComplaints(RemovedComplaintInfoPtr startRemPtr);
 void viewSingleComplaintCtrl(ComplaintInfoPtr startPtr);
 bool viewSingleComplaint(ComplaintInfoPtr startPtr, int searchKey);
 bool verifyCompNum(ComplaintInfoPtr startPtr, int searchKey);
 void editComplaintCtrl(ComplaintInfoPtr startPtr);
 bool editComplaint(ComplaintInfoPtr startPtr, int searchKey);
-void removeComplaintCtrl(ComplaintInfoPtr* startPtr);
-bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey);
+void removeComplaintCtrl(ComplaintInfoPtr* startPtr, RemovedComplaintInfoPtr* startRemPtr);
+bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey, RemovedComplaintInfoPtr* startRemPtr);
 
 
 
@@ -52,6 +67,7 @@ int main() {
 void menuCtrl() {
 
 	ComplaintInfoPtr startPtr = NULL;
+	RemovedComplaintInfoPtr startRemPtr = NULL;
 
 	/* Display Main Menu */
 	menuView();
@@ -82,7 +98,7 @@ void menuCtrl() {
 		case '2':
 			//remove complaint
 			system("cls");
-			removeComplaintCtrl(&startPtr);
+			removeComplaintCtrl(&startPtr, &startRemPtr);
 			break;
 		case '3':
 			//update complaint
@@ -104,6 +120,8 @@ void menuCtrl() {
 			break;
 		case '7':
 			//view all removed complaints
+			system("cls");
+			viewAllRemovedComplaints(startRemPtr);
 			break;
 		}
 		system("cls");
@@ -446,7 +464,7 @@ bool editComplaint(ComplaintInfoPtr startPtr, int searchKey) {
 
 /* REMOVE A COMPLAINT */
 
-void removeComplaintCtrl(ComplaintInfoPtr* startPtr) {
+void removeComplaintCtrl(ComplaintInfoPtr* startPtr, RemovedComplaintInfoPtr* startRemPtr) {
 
 	logln("\n\t\t\t===========================================");
 	logln("\n\t\t\t             REMOVE A COMPLAINT            ");
@@ -473,7 +491,7 @@ void removeComplaintCtrl(ComplaintInfoPtr* startPtr) {
 			log("Do you wish to remove this complaint? (y/n): ");
 			cin >> confirm;
 			if (confirm == 'y') {
-				removeComplaint(startPtr, searchKey);
+				removeComplaint(startPtr, searchKey, startRemPtr);
 				system("pause");
 			}
 		}
@@ -484,14 +502,52 @@ void removeComplaintCtrl(ComplaintInfoPtr* startPtr) {
 	}
 }
 
-bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey) {
+bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey, RemovedComplaintInfoPtr* startRemPtr) {
 
 	ComplaintInfoPtr previousPtr = NULL;
 	ComplaintInfoPtr currentPtr = NULL;
 	ComplaintInfoPtr tempPtr = NULL;
 
+	RemovedComplaintInfoPtr newPtr = NULL;
+	RemovedComplaintInfoPtr previousRemPtr = NULL;
+	RemovedComplaintInfoPtr currentRemPtr = NULL;
+
+	newPtr = new RemovedComplaintInfo;
+
+
 	if (searchKey == (*startPtr)->complaintNum) {
 		tempPtr = *startPtr;
+		if (newPtr != NULL) {
+
+			newPtr->complaintNum = tempPtr->complaintNum;
+			newPtr->customerName = tempPtr->customerName;
+			newPtr->customerAddress = tempPtr->customerAddress;
+			newPtr->complaint = tempPtr->complaint;
+			newPtr->contactNumber = tempPtr->contactNumber;
+			newPtr->date = tempPtr->date;
+			newPtr->status = "removed";
+			newPtr->nextPtr = NULL;
+
+			previousRemPtr = NULL;
+			currentRemPtr = *startRemPtr;
+
+			while (currentRemPtr != NULL && tempPtr->complaintNum > currentRemPtr->complaintNum) {
+				previousRemPtr = currentRemPtr;
+				currentRemPtr = currentRemPtr->nextPtr;
+			}
+
+			if (previousRemPtr == NULL) {
+				newPtr->nextPtr = *startRemPtr;
+				*startRemPtr = newPtr;
+			}
+			else {
+				previousRemPtr->nextPtr = newPtr;
+				newPtr->nextPtr = currentRemPtr;
+			}
+		}
+		else {
+			logln("Entry not added to removed complaints! No memory available.");
+		}
 		*startPtr = (*startPtr)->nextPtr;
 		delete(tempPtr);
 		logln("Entery Successfully Deleted\n");
@@ -508,6 +564,37 @@ bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey) {
 
 		if (currentPtr != NULL) {
 			tempPtr = currentPtr;
+			if (newPtr != NULL) {
+
+				newPtr->complaintNum = tempPtr->complaintNum;
+				newPtr->customerName = tempPtr->customerName;
+				newPtr->customerAddress = tempPtr->customerAddress;
+				newPtr->complaint = tempPtr->complaint;
+				newPtr->contactNumber = tempPtr->contactNumber;
+				newPtr->date = tempPtr->date;
+				newPtr->status = "removed";
+				newPtr->nextPtr = NULL;
+
+				previousRemPtr = NULL;
+				currentRemPtr = *startRemPtr;
+
+				while (currentRemPtr != NULL && tempPtr->complaintNum > currentRemPtr->complaintNum) {
+					previousRemPtr = currentRemPtr;
+					currentRemPtr = currentRemPtr->nextPtr;
+				}
+
+				if (previousRemPtr == NULL) {
+					newPtr->nextPtr = *startRemPtr;
+					*startRemPtr = newPtr;
+				}
+				else {
+					previousRemPtr->nextPtr = newPtr;
+					newPtr->nextPtr = currentRemPtr;
+				}
+			}
+			else {
+				logln("Entry not added to removed complaints! No memory available.");
+			}
 			previousPtr->nextPtr = currentPtr->nextPtr;
 			delete(tempPtr);
 			logln("Entry Successfully Deleted\n");
@@ -516,4 +603,35 @@ bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey) {
 	}
 
 	return false;
+}
+
+/*VIEW ALL REMOVED COMPLAINTS*/
+void viewAllRemovedComplaints(RemovedComplaintInfoPtr startRemPtr) {
+
+	logln("\n\t\t\t===========================================");
+	logln("\n\t\t\t           VIEW ALL COMPLAINTS             ");
+	logln("\n\t\t\t===========================================\n"); \
+
+		if (startRemPtr == NULL) {
+			logln("\n There are no complaints!\n");
+		}
+		else {
+			while (startRemPtr != NULL) {
+				logln("---------------------------------------------");
+				logln("\tComplaint ID: C" << startRemPtr->complaintNum);
+				logln("\tCustomer Name: " << startRemPtr->customerName);
+				logln("\tCustomer Address: " << startRemPtr->customerAddress);
+				logln("\tContact Number: " << startRemPtr->contactNumber);
+				logln("\tComplaint Description: " << startRemPtr->complaint);
+				logln("\tDate: " << startRemPtr->date);
+				logln("\tStatus: " << startRemPtr->status);
+
+				startRemPtr = startRemPtr->nextPtr;
+			}
+		}
+
+	logln("---------------------------------------------");
+	logln("\n\n");
+	system("pause");
+
 }
