@@ -33,9 +33,21 @@ struct RemovedComplaintInfo
 	struct RemovedComplaintInfo* nextPtr;
 };
 
+/*ADDRESSED COMPLAINTS QUEUE*/
+struct AddressedComplaintInfo
+{
+	int complaintNum;
+	string customerName;
+	string complaint;
+	string action;
+	string status;
+	struct AddressedComplaintInfo* nextPtr;
+};
 
+/*TYPE DEFENITIONS*/
 typedef ComplaintInfo* ComplaintInfoPtr;
 typedef RemovedComplaintInfo* RemovedComplaintInfoPtr;
+typedef AddressedComplaintInfo* AddressedComplaintInfoPtr;
 
 /*PROTOTYPES*/
 void menuCtrl();
@@ -51,6 +63,9 @@ void editComplaintCtrl(ComplaintInfoPtr startPtr);
 bool editComplaint(ComplaintInfoPtr startPtr, int searchKey);
 void removeComplaintCtrl(ComplaintInfoPtr* startPtr, RemovedComplaintInfoPtr* startRemPtr);
 bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey, RemovedComplaintInfoPtr* startRemPtr);
+void addressComplaintCtrl(AddressedComplaintInfoPtr* headPtr, AddressedComplaintInfoPtr* tailPtr, ComplaintInfoPtr* startPtr);
+bool addressComplaint(AddressedComplaintInfoPtr* headPtr, AddressedComplaintInfoPtr* tailPtr, ComplaintInfoPtr* startPtr, int searchKey);
+void viewAllAddressedComplaints(AddressedComplaintInfoPtr headPtr);
 
 
 
@@ -58,6 +73,8 @@ bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey, RemovedComplaint
 int main() {
 
 	menuCtrl();
+
+	return 0;
 
 }
 
@@ -68,6 +85,8 @@ void menuCtrl() {
 
 	ComplaintInfoPtr startPtr = NULL;
 	RemovedComplaintInfoPtr startRemPtr = NULL;
+	AddressedComplaintInfoPtr headPtr = NULL;
+	AddressedComplaintInfoPtr tailPtr = NULL;
 
 	/* Display Main Menu */
 	menuView();
@@ -78,7 +97,7 @@ void menuCtrl() {
 	char in;
 	cin >> in;
 
-	while (!(in == '1' || in == '2' || in == '3' || in == '4' || in == '5' || in == '6' || in == '7' || in == '0')) {
+	while (!(in == '1' || in == '2' || in == '3' || in == '4' || in == '5' || in == '6' || in == '7' || in == '8' || in == '9' || in == '0')) {
 		system("cls");
 		menuView();
 		log("\n\t\t\t	Enter a valid choice: ");
@@ -116,9 +135,19 @@ void menuCtrl() {
 			viewSingleComplaintCtrl(startPtr);
 			break;
 		case '6':
-			//view all addressed complaints
+			//address a complaint
+			system("cls");
+			addressComplaintCtrl(&headPtr, &tailPtr, &startPtr);
 			break;
 		case '7':
+			//view all addressed complaints
+			system("cls");
+			viewAllAddressedComplaints(headPtr);
+			break;
+		case '8':
+			//view all closed complaints
+			break;
+		case '9':
 			//view all removed complaints
 			system("cls");
 			viewAllRemovedComplaints(startRemPtr);
@@ -150,9 +179,13 @@ void menuView() {
 	logln("\t\t\t---------------------------------------------------");
 	logln("\t\t\t    INPUT  (5)	 TO VIEW A SINGLE COMPLAINT");
 	logln("\t\t\t---------------------------------------------------");
-	logln("\t\t\t    INPUT  (6)	 TO VIEW ALL ADDRESSED COMPLAINTS");
+	logln("\t\t\t    INPUT  (6)	 TO ADDRESS COMPLAINT");
 	logln("\t\t\t---------------------------------------------------");
-	logln("\t\t\t    INPUT  (7)	 TO VIEW ALL REMOVED COMPLAINTS");
+	logln("\t\t\t    INPUT  (7)	 TO VIEW ALL ADDRESSED COMPLAINTS");
+	logln("\t\t\t---------------------------------------------------");
+	logln("\t\t\t    INPUT  (8)	 TO VIEW ALL CLOSED COMPLAINTS");
+	logln("\t\t\t---------------------------------------------------");
+	logln("\t\t\t    INPUT  (9)	 TO VIEW ALL REMOVED COMPLAINTS");
 	logln("\t\t\t---------------------------------------------------");
 	logln("\t\t\t    INPUT  (0)	 TO EXIT");
 	logln("\t\t\t---------------------------------------------------");
@@ -183,12 +216,12 @@ void addCompCtrl(ComplaintInfoPtr* startPtr) {
 			cin >> complaintNum;
 			fail = cin.fail();
 			if (fail == true) {
-				logln("\tPlease enter a valid number.")
+				logln("\tPlease enter a valid number.");
 			}
 			failV = verifyCompNum(*startPtr, complaintNum);
 			cin.clear();
 			cin.ignore(100, '\n');
-		} while (fail && failV);
+		} while (fail || failV);
 
 
 		log("\tEnter Customer Name: ");
@@ -367,7 +400,7 @@ bool verifyCompNum(ComplaintInfoPtr startPtr, int searchKey) {
 		while (startPtr->complaintNum != searchKey) {
 			startPtr = startPtr->nextPtr;
 			if (startPtr == NULL) {
-				return true;
+				return false;
 			}
 		}
 
@@ -517,16 +550,18 @@ bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey, RemovedComplaint
 
 	if (searchKey == (*startPtr)->complaintNum) {
 		tempPtr = *startPtr;
-		if (newPtr != NULL) {
 
-			newPtr->complaintNum = tempPtr->complaintNum;
-			newPtr->customerName = tempPtr->customerName;
-			newPtr->customerAddress = tempPtr->customerAddress;
-			newPtr->complaint = tempPtr->complaint;
-			newPtr->contactNumber = tempPtr->contactNumber;
-			newPtr->date = tempPtr->date;
-			newPtr->status = "removed";
-			newPtr->nextPtr = NULL;
+		/*Add removed data to secondary structure*/
+		newPtr->complaintNum = tempPtr->complaintNum;
+		newPtr->customerName = tempPtr->customerName;
+		newPtr->customerAddress = tempPtr->customerAddress;
+		newPtr->complaint = tempPtr->complaint;
+		newPtr->contactNumber = tempPtr->contactNumber;
+		newPtr->date = tempPtr->date;
+		newPtr->status = "removed";
+		newPtr->nextPtr = NULL;
+
+		if (newPtr != NULL) {
 
 			previousRemPtr = NULL;
 			currentRemPtr = *startRemPtr;
@@ -564,16 +599,18 @@ bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey, RemovedComplaint
 
 		if (currentPtr != NULL) {
 			tempPtr = currentPtr;
-			if (newPtr != NULL) {
 
-				newPtr->complaintNum = tempPtr->complaintNum;
-				newPtr->customerName = tempPtr->customerName;
-				newPtr->customerAddress = tempPtr->customerAddress;
-				newPtr->complaint = tempPtr->complaint;
-				newPtr->contactNumber = tempPtr->contactNumber;
-				newPtr->date = tempPtr->date;
-				newPtr->status = "removed";
-				newPtr->nextPtr = NULL;
+			/*Add removed data to secondary structure*/
+			newPtr->complaintNum = tempPtr->complaintNum;
+			newPtr->customerName = tempPtr->customerName;
+			newPtr->customerAddress = tempPtr->customerAddress;
+			newPtr->complaint = tempPtr->complaint;
+			newPtr->contactNumber = tempPtr->contactNumber;
+			newPtr->date = tempPtr->date;
+			newPtr->status = "removed";
+			newPtr->nextPtr = NULL;
+
+			if (newPtr != NULL) {
 
 				previousRemPtr = NULL;
 				currentRemPtr = *startRemPtr;
@@ -627,6 +664,183 @@ void viewAllRemovedComplaints(RemovedComplaintInfoPtr startRemPtr) {
 				logln("\tStatus: " << startRemPtr->status);
 
 				startRemPtr = startRemPtr->nextPtr;
+			}
+		}
+
+	logln("---------------------------------------------");
+	logln("\n\n");
+	system("pause");
+
+}
+
+/* ADDRESS A COMPLAINT */
+void addressComplaintCtrl(AddressedComplaintInfoPtr* headPtr, AddressedComplaintInfoPtr* tailPtr, ComplaintInfoPtr* startPtr) {
+
+	logln("\n\t\t\t===========================================");
+	logln("\n\t\t\t             ADDRESS A COMPLAINT           ");
+	logln("\n\t\t\t===========================================\n");
+
+	int searchKey;
+	char confirm;
+	bool fail;
+
+	if (*startPtr == NULL) {
+		logln("\nThere are no complaints!\n");
+		system("pause");
+	}
+	else {
+		do {
+			log("\tEnter Complaint Number: C");
+			cin >> searchKey;
+			fail = cin.fail();
+			cin.clear();
+			cin.ignore(100, '\n');
+		} while (fail == true);
+
+		if (viewSingleComplaint(*startPtr, searchKey)) {
+			log("Do you wish to address this complaint? (y/n): ");
+			cin >> confirm;
+			cin.ignore(100, '\n');
+			if (confirm == 'y') {
+				addressComplaint(headPtr, tailPtr, startPtr, searchKey);
+				system("pause");
+			}
+		}
+		else {
+			logln("Complaint not found!");
+			system("pause");
+		}
+	}
+
+}
+
+bool addressComplaint(AddressedComplaintInfoPtr* headPtr, AddressedComplaintInfoPtr* tailPtr, ComplaintInfoPtr* startPtr, int searchKey) {
+
+	string action, status;
+	int input;
+	bool fail, failN = false;
+
+	ComplaintInfoPtr previousPtr = NULL;
+	ComplaintInfoPtr currentPtr = NULL;
+	ComplaintInfoPtr tempPtr = NULL;
+
+	AddressedComplaintInfoPtr newPtr;
+	newPtr = new AddressedComplaintInfo;
+
+	log("\nEnter Action taken: ");
+	getline(cin, action);
+
+	do {
+		log("Enter status (1/2/3) (1. Closed / 2. Open  / 3. Cannot Address): ");
+		cin >> input;
+		fail = cin.fail();
+		if (input != 1 && input != 2 && input != 3) {
+			failN = true;
+			logln("\tPlease enter a valid status (1, 2 or 3.");
+		}
+		if (fail == true) {
+			logln("\tPlease enter a valid status.");
+		}
+		cin.clear();
+		cin.ignore(100, '\n');
+	} while (fail || failN);
+
+	switch (input) {
+	case 1:
+		status = "closed";
+		break;
+	case 2:
+		status = "open";
+		break;
+	case 3:
+		status = "cannot-address";
+		break;
+	}
+
+	if (searchKey == (*startPtr)->complaintNum) {
+		tempPtr = *startPtr;
+
+		if (newPtr != NULL) {
+			/*Add data to addressed complaint structure*/
+			newPtr->complaintNum = tempPtr->complaintNum;
+			newPtr->customerName = tempPtr->customerName;
+			newPtr->complaint = tempPtr->complaint;
+			newPtr->action = action;
+			newPtr->status = status;
+			tempPtr->status = status;
+			newPtr->nextPtr = NULL;
+
+			if (*headPtr == NULL) {
+				*headPtr = newPtr;
+			}
+			else {
+				(*tailPtr)->nextPtr = newPtr;
+			}
+			logln("Entry Successfully added to addressed complaints!");
+			*tailPtr = newPtr;
+		}
+		else {
+			logln("Addressed complaint not added! No memory available.");
+		}
+		return true;
+	}
+	else {
+		previousPtr = *startPtr;
+		currentPtr = (*startPtr)->nextPtr;
+
+		while (currentPtr != NULL && currentPtr->complaintNum != searchKey) {
+			previousPtr = currentPtr;
+			currentPtr = currentPtr->nextPtr;
+		}
+
+		if (currentPtr != NULL) {
+			tempPtr = currentPtr;
+			/*Add data to addressed complaint structure*/
+			newPtr->complaintNum = tempPtr->complaintNum;
+			newPtr->customerName = tempPtr->customerName;
+			newPtr->complaint = tempPtr->complaint;
+			newPtr->action = action;
+			newPtr->status = status;
+			tempPtr->status = status;
+			newPtr->nextPtr = NULL;
+
+			if (*headPtr == NULL) {
+				*headPtr = newPtr;
+			}
+			else {
+				(*tailPtr)->nextPtr = newPtr;
+			}
+			logln("Entry Successfully added to addressed complaints!");
+			*tailPtr = newPtr;
+		}
+		else {
+			logln("Addressed complaint not added! No memory available.");
+		}
+		return true;
+	}
+	return false;
+}
+
+/*VIEW ALL ADDRESSED COMPLAINTS*/
+void viewAllAddressedComplaints(AddressedComplaintInfoPtr headPtr) {
+
+	logln("\n\t\t\t===========================================");
+	logln("\n\t\t\t       VIEW ALL ADDRESSED COMPLAINTS       ");
+	logln("\n\t\t\t===========================================\n"); \
+
+		if (headPtr == NULL) {
+			logln("\n There are no addressed complaints!\n");
+		}
+		else {
+			while (headPtr != NULL) {
+				logln("---------------------------------------------");
+				logln("\tComplaint ID: C" << headPtr->complaintNum);
+				logln("\tCustomer Name: " << headPtr->customerName);
+				logln("\tComplaint Description: " << headPtr->complaint);
+				logln("\tAction Taken: " << headPtr->action);
+				logln("\tStatus: " << headPtr->status);
+
+				headPtr = headPtr->nextPtr;
 			}
 		}
 
