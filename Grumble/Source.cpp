@@ -66,6 +66,7 @@ bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey, RemovedComplaint
 void addressComplaintCtrl(AddressedComplaintInfoPtr* headPtr, AddressedComplaintInfoPtr* tailPtr, ComplaintInfoPtr* startPtr);
 bool addressComplaint(AddressedComplaintInfoPtr* headPtr, AddressedComplaintInfoPtr* tailPtr, ComplaintInfoPtr* startPtr, int searchKey);
 void viewAllAddressedComplaints(AddressedComplaintInfoPtr headPtr);
+void viewAllClosedComplaints(AddressedComplaintInfoPtr headPtr);
 
 
 
@@ -146,6 +147,8 @@ void menuCtrl() {
 			break;
 		case '8':
 			//view all closed complaints
+			system("cls");
+			viewAllClosedComplaints(headPtr);
 			break;
 		case '9':
 			//view all removed complaints
@@ -839,6 +842,37 @@ void viewAllAddressedComplaints(AddressedComplaintInfoPtr headPtr) {
 				logln("\tComplaint Description: " << headPtr->complaint);
 				logln("\tAction Taken: " << headPtr->action);
 				logln("\tStatus: " << headPtr->status);
+
+				headPtr = headPtr->nextPtr;
+			}
+		}
+
+	logln("---------------------------------------------");
+	logln("\n\n");
+	system("pause");
+
+}
+
+/*VIEW ALL CLOSED COMPLAINTS*/
+void viewAllClosedComplaints(AddressedComplaintInfoPtr headPtr) {
+
+	logln("\n\t\t\t===========================================");
+	logln("\n\t\t\t         VIEW ALL CLOSED COMPLAINTS        ");
+	logln("\n\t\t\t===========================================\n"); \
+
+		if (headPtr == NULL) {
+			logln("\n There are no addressed complaints!\n");
+		}
+		else {
+			while (headPtr != NULL) {
+				if (headPtr->status == "closed") {
+					logln("---------------------------------------------");
+					logln("\tComplaint ID: C" << headPtr->complaintNum);
+					logln("\tCustomer Name: " << headPtr->customerName);
+					logln("\tComplaint Description: " << headPtr->complaint);
+					logln("\tAction Taken: " << headPtr->action);
+					logln("\tStatus: " << headPtr->status);
+				}
 
 				headPtr = headPtr->nextPtr;
 			}
