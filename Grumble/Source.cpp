@@ -67,6 +67,7 @@ void addressComplaintCtrl(AddressedComplaintInfoPtr* headPtr, AddressedComplaint
 bool addressComplaint(AddressedComplaintInfoPtr* headPtr, AddressedComplaintInfoPtr* tailPtr, ComplaintInfoPtr* startPtr, int searchKey);
 void viewAllAddressedComplaints(AddressedComplaintInfoPtr headPtr);
 void viewAllClosedComplaints(AddressedComplaintInfoPtr headPtr);
+bool verifyClosed(ComplaintInfoPtr startPtr, int searchKey);
 
 
 
@@ -162,6 +163,13 @@ void menuCtrl() {
 		cin >> in;
 	}
 
+	system("cls");
+	logln("\n\t\t\t===================================================");
+	logln("\n\t\t\t        I-CALL COMPLAINT MANANGEMENT SYSTEM        ");
+	logln("\n\t\t\t===================================================");
+	logln("\n\t\t\t       Created by Gayanga Chathushan Kuruppu");
+	logln("\t\t\t---------------------------------------------------\n\n");
+	system("pause");
 
 
 }
@@ -310,25 +318,25 @@ void viewAllComplaints(ComplaintInfoPtr startPtr) {
 
 	logln("\n\t\t\t===========================================");
 	logln("\n\t\t\t           VIEW ALL COMPLAINTS             ");
-	logln("\n\t\t\t===========================================\n"); \
+	logln("\n\t\t\t===========================================\n");
 
-		if (startPtr == NULL) {
-			logln("\n There are no complaints!\n");
-		}
-		else {
-			while (startPtr != NULL) {
-				logln("---------------------------------------------");
-				logln("\tComplaint ID: C" << startPtr->complaintNum);
-				logln("\tCustomer Name: " << startPtr->customerName);
-				logln("\tCustomer Address: " << startPtr->customerAddress);
-				logln("\tContact Number: " << startPtr->contactNumber);
-				logln("\tComplaint Description: " << startPtr->complaint);
-				logln("\tDate: " << startPtr->date);
-				logln("\tStatus: " << startPtr->status);
+	if (startPtr == NULL) {
+		logln("\n There are no complaints!\n");
+	}
+	else {
+		while (startPtr != NULL) {
+			logln("---------------------------------------------");
+			logln("\tComplaint ID: C" << startPtr->complaintNum);
+			logln("\tCustomer Name: " << startPtr->customerName);
+			logln("\tCustomer Address: " << startPtr->customerAddress);
+			logln("\tContact Number: " << startPtr->contactNumber);
+			logln("\tComplaint Description: " << startPtr->complaint);
+			logln("\tDate: " << startPtr->date);
+			logln("\tStatus: " << startPtr->status);
 
-				startPtr = startPtr->nextPtr;
-			}
+			startPtr = startPtr->nextPtr;
 		}
+	}
 
 	logln("---------------------------------------------");
 	logln("\n\n");
@@ -650,25 +658,25 @@ void viewAllRemovedComplaints(RemovedComplaintInfoPtr startRemPtr) {
 
 	logln("\n\t\t\t===========================================");
 	logln("\n\t\t\t           VIEW ALL COMPLAINTS             ");
-	logln("\n\t\t\t===========================================\n"); \
+	logln("\n\t\t\t===========================================\n");
 
-		if (startRemPtr == NULL) {
-			logln("\n There are no complaints!\n");
-		}
-		else {
-			while (startRemPtr != NULL) {
-				logln("---------------------------------------------");
-				logln("\tComplaint ID: C" << startRemPtr->complaintNum);
-				logln("\tCustomer Name: " << startRemPtr->customerName);
-				logln("\tCustomer Address: " << startRemPtr->customerAddress);
-				logln("\tContact Number: " << startRemPtr->contactNumber);
-				logln("\tComplaint Description: " << startRemPtr->complaint);
-				logln("\tDate: " << startRemPtr->date);
-				logln("\tStatus: " << startRemPtr->status);
+	if (startRemPtr == NULL) {
+		logln("\n There are no complaints!\n");
+	}
+	else {
+		while (startRemPtr != NULL) {
+			logln("---------------------------------------------");
+			logln("\tComplaint ID: C" << startRemPtr->complaintNum);
+			logln("\tCustomer Name: " << startRemPtr->customerName);
+			logln("\tCustomer Address: " << startRemPtr->customerAddress);
+			logln("\tContact Number: " << startRemPtr->contactNumber);
+			logln("\tComplaint Description: " << startRemPtr->complaint);
+			logln("\tDate: " << startRemPtr->date);
+			logln("\tStatus: " << startRemPtr->status);
 
-				startRemPtr = startRemPtr->nextPtr;
-			}
+			startRemPtr = startRemPtr->nextPtr;
 		}
+	}
 
 	logln("---------------------------------------------");
 	logln("\n\n");
@@ -700,19 +708,22 @@ void addressComplaintCtrl(AddressedComplaintInfoPtr* headPtr, AddressedComplaint
 			cin.ignore(100, '\n');
 		} while (fail == true);
 
-		if (viewSingleComplaint(*startPtr, searchKey)) {
-			log("Do you wish to address this complaint? (y/n): ");
-			cin >> confirm;
-			cin.ignore(100, '\n');
-			if (confirm == 'y') {
-				addressComplaint(headPtr, tailPtr, startPtr, searchKey);
+		if (verifyClosed(*startPtr, searchKey)) {
+			if (viewSingleComplaint(*startPtr, searchKey)) {
+				log("Do you wish to address this complaint? (y/n): ");
+				cin >> confirm;
+				cin.ignore(100, '\n');
+				if (confirm == 'y') {
+					addressComplaint(headPtr, tailPtr, startPtr, searchKey);
+					system("pause");
+				}
+			}
+			else {
+				logln("Complaint not found!");
 				system("pause");
 			}
 		}
-		else {
-			logln("Complaint not found!");
-			system("pause");
-		}
+
 	}
 
 }
@@ -829,23 +840,23 @@ void viewAllAddressedComplaints(AddressedComplaintInfoPtr headPtr) {
 
 	logln("\n\t\t\t===========================================");
 	logln("\n\t\t\t       VIEW ALL ADDRESSED COMPLAINTS       ");
-	logln("\n\t\t\t===========================================\n"); \
+	logln("\n\t\t\t===========================================\n");
 
-		if (headPtr == NULL) {
-			logln("\n There are no addressed complaints!\n");
-		}
-		else {
-			while (headPtr != NULL) {
-				logln("---------------------------------------------");
-				logln("\tComplaint ID: C" << headPtr->complaintNum);
-				logln("\tCustomer Name: " << headPtr->customerName);
-				logln("\tComplaint Description: " << headPtr->complaint);
-				logln("\tAction Taken: " << headPtr->action);
-				logln("\tStatus: " << headPtr->status);
+	if (headPtr == NULL) {
+		logln("\n There are no addressed complaints!\n");
+	}
+	else {
+		while (headPtr != NULL) {
+			logln("---------------------------------------------");
+			logln("\tComplaint ID: C" << headPtr->complaintNum);
+			logln("\tCustomer Name: " << headPtr->customerName);
+			logln("\tComplaint Description: " << headPtr->complaint);
+			logln("\tAction Taken: " << headPtr->action);
+			logln("\tStatus: " << headPtr->status);
 
-				headPtr = headPtr->nextPtr;
-			}
+			headPtr = headPtr->nextPtr;
 		}
+	}
 
 	logln("---------------------------------------------");
 	logln("\n\n");
@@ -858,28 +869,52 @@ void viewAllClosedComplaints(AddressedComplaintInfoPtr headPtr) {
 
 	logln("\n\t\t\t===========================================");
 	logln("\n\t\t\t         VIEW ALL CLOSED COMPLAINTS        ");
-	logln("\n\t\t\t===========================================\n"); \
+	logln("\n\t\t\t===========================================\n");
 
-		if (headPtr == NULL) {
-			logln("\n There are no addressed complaints!\n");
-		}
-		else {
-			while (headPtr != NULL) {
-				if (headPtr->status == "closed") {
-					logln("---------------------------------------------");
-					logln("\tComplaint ID: C" << headPtr->complaintNum);
-					logln("\tCustomer Name: " << headPtr->customerName);
-					logln("\tComplaint Description: " << headPtr->complaint);
-					logln("\tAction Taken: " << headPtr->action);
-					logln("\tStatus: " << headPtr->status);
-				}
-
-				headPtr = headPtr->nextPtr;
+	if (headPtr == NULL) {
+		logln("\n There are no addressed complaints!\n");
+	}
+	else {
+		while (headPtr != NULL) {
+			if (headPtr->status == "closed") {
+				logln("---------------------------------------------");
+				logln("\tComplaint ID: C" << headPtr->complaintNum);
+				logln("\tCustomer Name: " << headPtr->customerName);
+				logln("\tComplaint Description: " << headPtr->complaint);
+				logln("\tAction Taken: " << headPtr->action);
+				logln("\tStatus: " << headPtr->status);
 			}
+
+			headPtr = headPtr->nextPtr;
 		}
+	}
 
 	logln("---------------------------------------------");
 	logln("\n\n");
 	system("pause");
 
+}
+
+bool verifyClosed(ComplaintInfoPtr startPtr, int searchKey) {
+	while (startPtr->complaintNum != searchKey) {
+		startPtr = startPtr->nextPtr;
+		if (startPtr == NULL) {
+			return true;
+			//return false;
+		}
+	}
+
+	if (startPtr->status == "closed") {
+		logln("This complaint is closed");
+		system("pause");
+		return false;
+	}
+
+	if (startPtr->status == "cannot-address") {
+		logln("This complaint cannot be addressed");
+		system("pause");
+		return false;
+	}
+
+	return true;
 }
