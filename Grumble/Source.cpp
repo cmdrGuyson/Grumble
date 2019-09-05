@@ -162,8 +162,16 @@ void menuCtrl() {
 		log("\n\t\t\t	Enter your choice: ");
 		cin >> in;
 	}
-
+	
 	system("cls");
+	system("color c");
+	logln("\t\t\t\t   ______                           ");
+	logln("\t\t\t\t  / ____/_  ____  ___________  ____ ");
+	logln("\t\t\t\t / / __/ / / / / / / ___/ __ \\/ __ \\")
+	logln("\t\t\t\t/ /_/ / /_/ / /_/ (__  ) /_/ / / / /");
+	logln("\t\t\t\t\\____/\\__,_/\\__, /____/\\____/_/ /_/ ");
+	logln("\t\t\t\t           /____/                    ");
+
 	logln("\n\t\t\t===================================================");
 	logln("\n\t\t\t        I-CALL COMPLAINT MANANGEMENT SYSTEM        ");
 	logln("\n\t\t\t===================================================");
@@ -496,6 +504,7 @@ bool editComplaint(ComplaintInfoPtr startPtr, int searchKey) {
 
 		log("\nIs this information correct? (y/n): ");
 		cin >> confirm;
+		cin.ignore(100, '\n');
 
 	} while (confirm != 'y');
 
@@ -534,6 +543,7 @@ void removeComplaintCtrl(ComplaintInfoPtr* startPtr, RemovedComplaintInfoPtr* st
 		if (viewSingleComplaint(*startPtr, searchKey)) {
 			log("Do you wish to remove this complaint? (y/n): ");
 			cin >> confirm;
+			cin.ignore(100, '\n');
 			if (confirm == 'y') {
 				removeComplaint(startPtr, searchKey, startRemPtr);
 				system("pause");
@@ -657,7 +667,7 @@ bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey, RemovedComplaint
 void viewAllRemovedComplaints(RemovedComplaintInfoPtr startRemPtr) {
 
 	logln("\n\t\t\t===========================================");
-	logln("\n\t\t\t           VIEW ALL COMPLAINTS             ");
+	logln("\n\t\t\t        VIEW ALL REMOVED COMPLAINTS        ");
 	logln("\n\t\t\t===========================================\n");
 
 	if (startRemPtr == NULL) {
