@@ -277,6 +277,7 @@ void addCompCtrl(ComplaintInfoPtr* startPtr) {
 
 		log("\nIs this information correct? (y/n): ");
 		cin >> confirm;
+		cin.ignore(100, '\n');
 
 	} while (confirm != 'y');
 
