@@ -95,63 +95,66 @@ void menuCtrl() {
 
 
 	/* Get User Response */
-	log("\n\t\t\t	Enter your choice: ");
-	char in;
-	cin >> in;
 
-	while (!(in == '1' || in == '2' || in == '3' || in == '4' || in == '5' || in == '6' || in == '7' || in == '8' || in == '9' || in == '0')) {
-		system("cls");
-		menuView();
-		log("\n\t\t\t	Enter a valid choice: ");
+	int in;
+	bool fail;
+
+	do {
+		log("\n\t\t\t	Enter your choice: ");
 		cin >> in;
-	}
+		fail = cin.fail();
+		cin.clear();
+		cin.ignore(100, '\n');
+	} while (fail);
+
 
 
 	/* Handle User Response */
-	while (in != '0') {
+	do {
+
 		switch (in) {
-		case '1':
+		case 1:
 			//add complaint
 			system("cls");
 			addCompView();
 			addCompCtrl(&startPtr);
 			break;
-		case '2':
+		case 2:
 			//remove complaint
 			system("cls");
 			removeComplaintCtrl(&startPtr, &startRemPtr);
 			break;
-		case '3':
+		case 3:
 			//update complaint
 			system("cls");
 			editComplaintCtrl(startPtr);
 			break;
-		case '4':
+		case 4:
 			//view all complaints
 			system("cls");
 			viewAllComplaints(startPtr);
 			break;
-		case '5':
+		case 5:
 			//view single complaint
 			system("cls");
 			viewSingleComplaintCtrl(startPtr);
 			break;
-		case '6':
+		case 6:
 			//address a complaint
 			system("cls");
 			addressComplaintCtrl(&headPtr, &tailPtr, &startPtr);
 			break;
-		case '7':
+		case 7:
 			//view all addressed complaints
 			system("cls");
 			viewAllAddressedComplaints(headPtr);
 			break;
-		case '8':
+		case 8:
 			//view all closed complaints
 			system("cls");
 			viewAllClosedComplaints(headPtr);
 			break;
-		case '9':
+		case 9:
 			//view all removed complaints
 			system("cls");
 			viewAllRemovedComplaints(startRemPtr);
@@ -161,14 +164,17 @@ void menuCtrl() {
 		menuView();
 		log("\n\t\t\t	Enter your choice: ");
 		cin >> in;
-	}
-	
+		fail = cin.fail();
+		cin.clear();
+		cin.ignore(100, '\n');
+	} while (in != 0 || fail);
+
 	system("cls");
 	system("color c");
 	logln("\t\t\t\t   ______                           ");
 	logln("\t\t\t\t  / ____/_  ____  ___________  ____ ");
 	logln("\t\t\t\t / / __/ / / / / / / ___/ __ \\/ __ \\")
-	logln("\t\t\t\t/ /_/ / /_/ / /_/ (__  ) /_/ / / / /");
+		logln("\t\t\t\t/ /_/ / /_/ / /_/ (__  ) /_/ / / / /");
 	logln("\t\t\t\t\\____/\\__,_/\\__, /____/\\____/_/ /_/ ");
 	logln("\t\t\t\t           /____/                    ");
 
@@ -606,7 +612,7 @@ bool removeComplaint(ComplaintInfoPtr* startPtr, int searchKey, RemovedComplaint
 		}
 		*startPtr = (*startPtr)->nextPtr;
 		delete(tempPtr);
-		logln("Entery Successfully Deleted\n");
+		logln("Entry Successfully Deleted\n");
 		return true;
 	}
 	else {
