@@ -173,7 +173,7 @@ void menuCtrl() {
 	system("color c");
 	logln("\t\t\t\t   ______                           ");
 	logln("\t\t\t\t  / ____/_  ____  ___________  ____ ");
-	logln("\t\t\t\t / / __/ / / / / / / ___/ __ \\/ __ \\")
+	logln("\t\t\t\t / / __/ / / / / / / ___/ __ \\/ __ \\");
 	logln("\t\t\t\t/ /_/ / /_/ / /_/ (__  ) /_/ / / / /");
 	logln("\t\t\t\t\\____/\\__,_/\\__, /____/\\____/_/ /_/ ");
 	logln("\t\t\t\t           /____/                    ");
@@ -765,9 +765,12 @@ bool addressComplaint(AddressedComplaintInfoPtr* headPtr, AddressedComplaintInfo
 		log("Enter status (1/2/3) (1. Closed / 2. Open  / 3. Cannot Address): ");
 		cin >> input;
 		fail = cin.fail();
-		if (input != 1 && input != 2 && input != 3) {
+		if (input != 1 && input != 2 && input !=3) {
 			failN = true;
 			logln("\tPlease enter a valid status (1, 2 or 3.");
+		}
+		else {
+			failN = true;
 		}
 		if (fail == true) {
 			logln("\tPlease enter a valid status.");

@@ -1,2 +1,4 @@
 # Grumble
- Complaint management system [C++ demo project]
+ Complaint management system
+
+ ![Screenshot](Capture.png)
