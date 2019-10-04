@@ -1,4 +1,4 @@
 # Grumble
  Complaint management system
 
- ![Screenshot](Capture.png)
+![alt text]("https://i.ibb.co/z5kyKXB/Capture.png")
